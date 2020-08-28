@@ -74,6 +74,9 @@ houses$cod <- 1:row_numbers
 houses$furniture_new <- ifelse(houses$furniture == "furnished", 1, 0)
 houses$animal_new <- ifelse(houses$animal == "acept", 1, 0)
 
+houses$floor_new <- ifelse(houses$floor == "-", 0, houses$floor)
+houses$floor_new <- as.numeric(as.character(houses$floor_new))
+
 houses
 
 
