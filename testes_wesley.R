@@ -1,3 +1,7 @@
+- Cenário inicial vs. Cenário final
+- Documento, o que você espera encontrar escrito?
+- Formato padrão que vc mandou está diferente do publicado no RITA
+
 # install.packages("tidyverse")
 library("dbplyr")
 
@@ -29,18 +33,29 @@ unique(houses$andares) # retorna tipos únicos de andares
 
 houses[houses$andares == "-", which(colnames(houses)=="andares")] <- "0"
 
+houses <- houses[houses$andares != "301", ]
+
 houses$andares_new <- as.numeric(houses$andares)
 
-houses <- houses[houses$andares != 301, ]
 
-# 3 - Corrigindo cidade São Paulo que está com 
+# 3 - Corrigindo cidade São Paulo que está com caractere não UTF-8
+houses_old <- houses
+
 unique(houses$cidade)
 
-houses_old <- houses
+houses[houses$cidade == "SÃ£o Paulo", which(colnames(houses) == "cidade")] = "São Paulo"
 
 
 # 4 - Trocando cidades para números
 houses$cidade_new <- as.numeric(as.factor(houses$cidade))
+
+unique(houses$cidade_new)
+
+# 5 - Removendo IPTU muito caro = "313700"
+houses <- houses[houses$iptu != "313700", ]
+
+# 6 - Removendo Condomínio muito caro = "1117000"
+houses <- houses[houses$condominio != "1117000", ]
 
 # 5 - Estimando modelo preliminar anterior com CIDADES transformadas em números - R-QUADRADO = 0.9858
 model <- lm (aluguel ~ cidade_new + area + comodos + banheiros + vagas + andares + animais + mobilia + 
