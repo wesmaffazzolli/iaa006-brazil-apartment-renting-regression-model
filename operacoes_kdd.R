@@ -102,24 +102,26 @@ teste <- houses_fatiado[-indices,]
 # 8 - Treinar um modelo Random Forest com a base de treino (coloquei um SVMRadial para teste e como exemplo)
 set.seed(7)
 
-modelo_treino_rf <- train(cidade_new ~ area + comodos + banheiros + vagas + andares_new + animais_new + mobilia_new + condominio +
-                            aluguel + iptu + seguro, data = treino, method = "rf")
+modelo_treino_rna <- train(cidade_new ~ area + comodos + banheiros + vagas + andares_new + animais_new + mobilia_new + condominio +
+                      aluguel + iptu + seguro, data = treino, method = "nnet", trace = FALSE)
+
+# modelo_treino_rf <- train(cidade_new ~ area + comodos + banheiros + vagas + andares_new + animais_new + mobilia_new + condominio +
+#                            aluguel + iptu + seguro, data = treino, method = "rf")
 
 # modelo_treino_svm <- train(cidade_new ~ area + comodos + banheiros + vagas + andares_new + animais_new + mobilia_new + condominio +
 #                      aluguel + iptu + seguro, method = "svmRadial")
 
-# modelo_treino_rna <- train(cidade_new ~ area + comodos + banheiros + vagas + andares_new + animais_new + mobilia_new + condominio +
-#                      aluguel + iptu + seguro, data = treino, method = "nnet", trace = FALSE)
-
 # 9 - Usar o modelo treinado, anteriormente, agora com a base de teste para testar a classificação
-modelo_predito_rf <- predict(modelo_treino_rf, teste)
+modelo_predito_rna <- predict(modelo_treino_rna, teste)
+# modelo_predito_rf <- predict(modelo_treino_rf, teste)
 # modelo_predito_svm <- predict(modelo_treino_svm, teste)
-# modelo_predito_rna <- predict(modelo_treino_rna, teste)
+
 
 # 10 - Matriz de confusão para visualizar resultado da classificação com 
-confusionMatrix(modelo_predito_rf, teste$cidade_new)
-# confusionMatrix(modelo_predito_svm, teste$cidade)
-# confusionMatrix(modelo_predito_rna, teste$cidade)
+confusionMatrix(modelo_predito_rna, teste$cidade_new)
+# confusionMatrix(modelo_predito_rf, teste$cidade_new)
+# confusionMatrix(modelo_predito_svm, teste$cidade_new)
+
 
 
 #####################################################################
