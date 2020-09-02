@@ -38,12 +38,14 @@ install.packages("e1071")
 install.packages("randomForest")
 install.packages("kernlab")
 install.packages("caret")
+install.packages("nnet")
 
 library("e1071")
 library("randomForest")
 library("kernlab")
 library("caret")
 library("dbplyr")
+library("nnet")
 
 # 0 - Personal Environment set (Diretório padrão pessoal para salvar outputs do R)
 getwd()
@@ -68,11 +70,6 @@ colnames(houses)[13] <- "somatorio"
 houses$cod <- 1:nrow(houses)
 houses_old <- houses
 
-summary(houses)
-
-View(houses)
-
-
 #### TRATAMENTOS MÍNIMOS PARA RODAR MODELO ######
 ###############################
 # 2 - Coluna Cidades
@@ -89,6 +86,7 @@ houses$animais_new <- ifelse(houses$animais == "acept", 1, 0)
 houses$mobilia_new <- ifelse(houses$mobilia == "furnished", 1, 0)
 
 # 6 - Fatiar 15% da base total para reduzir o número de registros para treino (senão leva mto tempo pro algoritmo)
+set.seed(7)
 indices_total <- createDataPartition(houses$cidade, p=0.15, list=FALSE)
 houses_fatiado <- houses[indices_total, ]
 
@@ -99,30 +97,33 @@ treino <- houses_fatiado[indices,]
 
 teste <- houses_fatiado[-indices,]
 
-# 8 - Treinar um modelo Random Forest com a base de treino (coloquei um SVMRadial para teste e como exemplo)
-set.seed(7)
-
+# 8 - Treinar modelo
+# Exemplos de algoritmos caret package: https://topepo.github.io/caret/available-models.html
+# RNA
 modelo_treino_rna <- train(cidade_new ~ area + comodos + banheiros + vagas + andares_new + animais_new + mobilia_new + condominio +
                       aluguel + iptu + seguro, data = treino, method = "nnet", trace = FALSE)
 
-# modelo_treino_rf <- train(cidade_new ~ area + comodos + banheiros + vagas + andares_new + animais_new + mobilia_new + condominio +
-#                            aluguel + iptu + seguro, data = treino, method = "rf")
+# ID3: https://www.edureka.co/blog/decision-tree-algorithm/ & https://rpubs.com/JuanBarros/projetoIA2
+modelo_treino_id3 <- train(cidade_new ~ area + comodos + banheiros + vagas + andares_new + animais_new + mobilia_new + condominio +
+                            aluguel + iptu + seguro, data = treino, method = "rpart")
+# Modelo Estatístico:
+# modelo_treino_glm <- train(cidade_new ~ area + comodos + banheiros + vagas + andares_new + animais_new + mobilia_new + condominio +
+                      #aluguel + iptu + seguro, data = treino, method = "glm")
 
-# modelo_treino_svm <- train(cidade_new ~ area + comodos + banheiros + vagas + andares_new + animais_new + mobilia_new + condominio +
-#                      aluguel + iptu + seguro, method = "svmRadial")
 
 # 9 - Usar o modelo treinado, anteriormente, agora com a base de teste para testar a classificação
 modelo_predito_rna <- predict(modelo_treino_rna, teste)
-# modelo_predito_rf <- predict(modelo_treino_rf, teste)
-# modelo_predito_svm <- predict(modelo_treino_svm, teste)
-
+modelo_predito_id3 <- predict(modelo_treino_id3, teste)
+# modelo_predito_glm <- predict(modelo_treino_glm, teste)
 
 # 10 - Matriz de confusão para visualizar resultado da classificação com 
 confusionMatrix(modelo_predito_rna, teste$cidade_new)
-# confusionMatrix(modelo_predito_rf, teste$cidade_new)
-# confusionMatrix(modelo_predito_svm, teste$cidade_new)
+confusionMatrix(modelo_predito_id3, teste$cidade_new)
+# confusionMatrix(modelo_predito_glm, teste$cidade_new)
 
-
+# 11 - Salvar modelos gerados para uso posterior
+saveRDS(modelo_treino_rna, "modelo_treino_rna_inicial.rds")
+saveRDS(modelo_treino_id3, "modelo_treino_id3_inicial.rds")
 
 #####################################################################
 #### IMPROVEMENTS START HERE - LET'S DO IT! #########################
