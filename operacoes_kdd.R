@@ -125,6 +125,10 @@ confusionMatrix(modelo_predito_id3, teste$cidade_new)
 saveRDS(modelo_treino_rna, "modelo_treino_rna_inicial.rds")
 saveRDS(modelo_treino_id3, "modelo_treino_id3_inicial.rds")
 
+# 12 - Para ler um modelo posteriormente
+modelo_treino_rna <- readRDS("modelo_treino_rna_inicial.rds")
+modelo_treino_id3 <- readRDS("modelo_treino_id3_inicial.rds")
+
 #####################################################################
 #### IMPROVEMENTS START HERE - LET'S DO IT! #########################
 #####################################################################
