@@ -122,7 +122,10 @@ confusionMatrix(modelo_predito_id3, teste$cidade_new)
 # confusionMatrix(modelo_predito_glm, teste$cidade_new)
 
 # 11 - Salvar modelos gerados para uso posterior
+print(modelo_treino_rna)
 saveRDS(modelo_treino_rna, "modelo_treino_rna_inicial.rds")
+
+print(modelo_treino_id3)
 saveRDS(modelo_treino_id3, "modelo_treino_id3_inicial.rds")
 
 # 12 - Para ler um modelo posteriormente
